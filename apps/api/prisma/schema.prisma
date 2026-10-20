@@ -1,0 +1,77 @@
+// Database schema. See docs/definicao-do-projeto.md, section 6.
+// Only the auth tables exist so far; the project tables come with their features.
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Papel {
+  inspetor
+  pm
+  admin
+}
+
+enum Idioma {
+  pt
+  en
+}
+
+enum TipoTokenConvite {
+  convite
+  redefinir_senha
+}
+
+model Usuario {
+  id        String   @id @default(uuid()) @db.Uuid
+  nome      String
+  email     String   @unique
+  /// Null until the invited user sets a password.
+  senhaHash String?  @map("senha_hash")
+  papel     Papel
+  idioma    Idioma   @default(pt)
+  ativo     Boolean  @default(true)
+  criadoEm  DateTime @default(now()) @map("criado_em") @db.Timestamptz
+  atualizadoEm DateTime @updatedAt @map("atualizado_em") @db.Timestamptz
+
+  sessoes       Sessao[]
+  tokensConvite TokenConvite[]
+
+  @@map("usuarios")
+}
+
+model Sessao {
+  id          String    @id @default(uuid()) @db.Uuid
+  usuarioId   String    @map("usuario_id") @db.Uuid
+  /// Hash of the refresh token; the token itself is never stored.
+  refreshHash String    @unique @map("refresh_hash")
+  expiraEm    DateTime  @map("expira_em") @db.Timestamptz
+  revogadaEm  DateTime? @map("revogada_em") @db.Timestamptz
+  criadaEm    DateTime  @default(now()) @map("criada_em") @db.Timestamptz
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@map("sessoes")
+}
+
+model TokenConvite {
+  id        String           @id @default(uuid()) @db.Uuid
+  usuarioId String           @map("usuario_id") @db.Uuid
+  tipo      TipoTokenConvite
+  tokenHash String           @unique @map("token_hash")
+  expiraEm  DateTime         @map("expira_em") @db.Timestamptz
+  usadoEm   DateTime?        @map("usado_em") @db.Timestamptz
+  criadoEm  DateTime         @default(now()) @map("criado_em") @db.Timestamptz
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@map("tokens_convite")
+}

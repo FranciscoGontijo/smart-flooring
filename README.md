@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smart Flooring
 
-## Getting Started
+Platform for Smart Flooring: from the lead to the installation, with AI-generated inspection
+documents. The product definition (in Portuguese) is in
+[`docs/definicao-do-projeto.md`](docs/definicao-do-projeto.md).
 
-First, run the development server:
+## Structure
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+apps/
+  web/        Next.js + shadcn/ui: inspector (mobile first), project manager and admin
+  api/        Express + Prisma: auth (own JWT), rules, jobs, AI, documents, e-mail
+packages/
+  shared/     zod schemas and types shared by web and api
+docs/         product definition
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The web app talks only to the API. Supabase is used as Postgres + Storage, from the API only.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Requirements
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Node 24 (`.nvmrc`)
+- pnpm 12
+- Docker (local Postgres)
 
-## Learn More
+## Getting started
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm install
+pnpm db:up                                   # Postgres on localhost:5433
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env.local
+pnpm --filter @smart-flooring/api db:migrate
+pnpm dev                                     # web :3000, api :4000
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command                       | What it does             |
+| ----------------------------- | ------------------------ |
+| `pnpm dev`                    | All apps in watch mode   |
+| `pnpm check`                  | lint + typecheck + tests |
+| `pnpm build`                  | Builds every package     |
+| `pnpm format`                 | Prettier                 |
+| `pnpm db:up` / `pnpm db:down` | Local Postgres           |

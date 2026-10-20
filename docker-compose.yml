@@ -1,0 +1,15 @@
+# Local Postgres for development. Production and staging use Supabase.
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: smart
+      POSTGRES_PASSWORD: smart
+      POSTGRES_DB: smart_flooring
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
