@@ -2,7 +2,7 @@ import { healthSchema, type Health } from "@smart-flooring/shared";
 import { connection } from "next/server";
 import { API_URL } from "@/lib/api";
 
-async function lerHealth(): Promise<Health | null> {
+async function readHealth(): Promise<Health | null> {
   try {
     const res = await fetch(`${API_URL}/health`, { cache: "no-store" });
     return healthSchema.parse(await res.json());
@@ -13,11 +13,11 @@ async function lerHealth(): Promise<Health | null> {
 
 export default async function Home() {
   await connection();
-  const health = await lerHealth();
+  const health = await readHealth();
 
-  const linhas = [
-    { rotulo: "API", ok: health !== null },
-    { rotulo: "Banco de dados", ok: health?.db === "ok" },
+  const rows = [
+    { label: "API", ok: health !== null },
+    { label: "Banco de dados", ok: health?.database === "ok" },
   ];
 
   return (
@@ -27,9 +27,9 @@ export default async function Home() {
         <p className="text-muted-foreground text-sm">Esqueleto do monorepo: web, api e shared.</p>
       </div>
       <ul className="divide-border divide-y rounded-lg border">
-        {linhas.map(({ rotulo, ok }) => (
-          <li key={rotulo} className="flex items-center justify-between px-4 py-3 text-sm">
-            <span>{rotulo}</span>
+        {rows.map(({ label, ok }) => (
+          <li key={label} className="flex items-center justify-between px-4 py-3 text-sm">
+            <span>{label}</span>
             <span className={ok ? "text-green-600" : "text-destructive"}>
               {ok ? "ok" : "indisponível"}
             </span>

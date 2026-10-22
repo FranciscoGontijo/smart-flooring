@@ -1,43 +1,35 @@
-import { pino } from "pino";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
-import { criarApp } from "./app.js";
+import { createApp } from "./app.js";
 
-const logger = pino({ level: "silent" });
+const app = createApp();
 
-function app(verificarBanco: () => Promise<void>) {
-  return criarApp({ logger, webUrl: "http://localhost:3000", verificarBanco });
-}
-
-describe("GET /health", () => {
-  it("returns 200 when the database answers", async () => {
-    const res = await request(app(async () => {})).get("/health");
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual({ status: "ok", db: "ok" });
-  });
-
-  it("returns 503 when the database fails", async () => {
-    const res = await request(
-      app(async () => {
-        throw new Error("down");
-      }),
-    ).get("/health");
-    expect(res.status).toBe(503);
-    expect(res.body).toEqual({ status: "ok", db: "erro" });
-  });
-});
-
-describe("unknown routes", () => {
-  it("returns 404 in JSON", async () => {
-    const res = await request(app(async () => {})).get("/nao-existe");
+describe("cross-cutting behavior", () => {
+  it("returns ROUTE_NOT_FOUND with the request id for unknown routes", async () => {
+    const res = await request(app).get("/does-not-exist").set("X-Request-Id", "abc-123");
     expect(res.status).toBe(404);
-    expect(res.body).toEqual({ erro: "Rota não encontrada." });
+    expect(res.headers["x-request-id"]).toBe("abc-123");
+    expect(res.body).toEqual({
+      error: { code: "ROUTE_NOT_FOUND", message: "Rota não encontrada.", requestId: "abc-123" },
+    });
   });
 
-  it("allows only the web origin with credentials", async () => {
-    const res = await request(app(async () => {}))
-      .get("/health")
-      .set("Origin", "http://localhost:3000");
+  it("generates a request id when the client sends an unsafe one", async () => {
+    const res = await request(app).get("/does-not-exist").set("X-Request-Id", "bad id!");
+    expect(res.headers["x-request-id"]).toMatch(/^[0-9a-f-]{36}$/);
+  });
+
+  it("answers MALFORMED_JSON for an invalid JSON body", async () => {
+    const res = await request(app)
+      .post("/health")
+      .set("Content-Type", "application/json")
+      .send("{not json");
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe("MALFORMED_JSON");
+  });
+
+  it("allows only the web origin, with credentials", async () => {
+    const res = await request(app).get("/does-not-exist").set("Origin", "http://localhost:3000");
     expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:3000");
     expect(res.headers["access-control-allow-credentials"]).toBe("true");
   });

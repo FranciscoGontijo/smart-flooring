@@ -18,4 +18,4 @@ COPY --from=build /app .
 COPY --from=build /repo/apps/api/dist ./dist
 USER node
 EXPOSE 4000
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/server.js"]

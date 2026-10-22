@@ -1,4 +1,4 @@
 export * from "./health.js";
-export * from "./materiais.js";
-export * from "./papeis.js";
-export * from "./projetos.js";
+export * from "./materials.js";
+export * from "./projects.js";
+export * from "./roles.js";
