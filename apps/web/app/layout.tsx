@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -15,6 +15,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Smart Flooring",
   description: "Inspeções, documentos e acompanhamento de projetos da Smart Flooring.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Lets the fixed bars use env(safe-area-inset-*) on iPhones.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
