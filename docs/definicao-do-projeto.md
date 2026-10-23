@@ -1,6 +1,6 @@
 # Smart Flooring App: definição do projeto
 
-> Versão 0.9, 21/10/2026 (0.2: projeto criado pelo PM, agendamento, chat e notificações; 0.3: recusa pelo inspetor, papel de administrador, visibilidade e e-mails; 0.4: "vendedor" virou project manager (PM), etapas do projeto, prazos, Update/Close work order, a data do assessment passa a ser do PM; 0.5: nome "projeto" na interface, reabertura, motivos fixos de fechamento, PM pode fazer o assessment; 0.6: lista de materiais e waste; 0.7: lista genérica por tipo de produto, guia de consumo em aberto, waste de diagonais/herringbone, carpet fora; 0.8: stack definida, tudo pela API com JWT próprio; 0.9: código em inglês e estrutura da API). Documento vivo: atualizar quando uma decisão mudar.
+> Versão 0.10, 23/10/2026 (0.2: projeto criado pelo PM, agendamento, chat e notificações; 0.3: recusa pelo inspetor, papel de administrador, visibilidade e e-mails; 0.4: "vendedor" virou project manager (PM), etapas do projeto, prazos, Update/Close work order, a data do assessment passa a ser do PM; 0.5: nome "projeto" na interface, reabertura, motivos fixos de fechamento, PM pode fazer o assessment; 0.6: lista de materiais e waste; 0.7: lista genérica por tipo de produto, guia de consumo em aberto, waste de diagonais/herringbone, carpet fora; 0.8: stack definida, tudo pela API com JWT próprio; 0.9: código em inglês e estrutura da API; 0.10: dois formulários à escolha do inspetor, layout como rascunho à mão livre por área). Documento vivo: atualizar quando uma decisão mudar.
 > Nenhum código foi escrito ainda. Este documento é a base para começar.
 
 ## 1. Objetivo
@@ -158,7 +158,7 @@ Push no celular (PWA instalado na tela inicial) fica para uma segunda versão.
 | ------------------ | ---------------------------------------------------------------------------------------------------------- | -------------------------- |
 | Lista de serviços  | **IA extrai** do texto: serviço, quantidade, unidade, área, observação                                     | Tabela editável no sistema |
 | Lista de materiais | Gerada pelos serviços + guia de consumo + waste (seção 4.4), por **tipo de produto**; **IA sugere** extras | Tabela editável no sistema |
-| Layout das áreas   | Tabela de áreas + desenho esquemático (retângulos proporcionais) + fotos                                   | PDF                        |
+| Layout das áreas   | Rascunho à mão livre por área (só representação, sem medidas) + tabela de áreas + fotos                    | PDF                        |
 | Moisture readings  | **IA extrai** as leituras do texto → formulário por área, conferido pelo inspetor                          | DOCX                       |
 
 ### 4.2 Documentos do PM
@@ -237,7 +237,7 @@ A lista sai **agrupada por categoria**, com subtotal por área e total geral, e 
 - Carpet.
 - Acesso do instalador.
 - Ditado por voz (próximo passo provável).
-- Editor de desenho de planta no celular.
+- Editor de planta com medidas (o layout é só um rascunho à mão livre, D38).
 
 ## 5. Arquitetura
 
@@ -447,6 +447,8 @@ Para cada documento, enviar também:
 | D34 | Usuários entram só por convite do admin, com e-mail para definir senha                                                                                                                        | Sem cadastro aberto                                                                                  |
 | D35 | Provedor da API decidido no primeiro deploy                                                                                                                                                   | O Dockerfile não muda                                                                                |
 | D36 | Código em inglês (nomes, arquivos, colunas, valores de enum); mensagens ao usuário em português; a API segue a estrutura do quadraon (módulos com routes → controller → service → repository) | Padrão já usado no quadraon                                                                          |
+| D37 | Os dois formulários do inspetor (linha por linha e por área) ficam disponíveis, e o inspetor escolhe                                                                                          | Os dois agradaram nos protótipos                                                                     |
+| D38 | Layout = rascunho à mão livre, um por área, sem medidas extraídas do desenho                                                                                                                  | Só precisa ser uma representação                                                                     |
 
 ## 10. Em aberto
 

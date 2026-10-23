@@ -1,4 +1,5 @@
 import { healthSchema, type Health } from "@smart-flooring/shared";
+import Link from "next/link";
 import { connection } from "next/server";
 import { API_URL } from "@/lib/api";
 
@@ -36,6 +37,12 @@ export default async function Home() {
           </li>
         ))}
       </ul>
+      <Link
+        href="/inspection"
+        className="bg-primary text-primary-foreground flex h-12 items-center justify-center rounded-xl font-medium"
+      >
+        Ver protótipos do formulário do inspetor
+      </Link>
     </main>
   );
 }
