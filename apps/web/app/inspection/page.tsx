@@ -1,6 +1,7 @@
 import { ChevronRight, LayoutGrid, ListPlus } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { InstallHint } from "@/components/pwa/install-hint";
 import { MOCK_PROJECT } from "@/lib/inspection/project";
 
 export const metadata: Metadata = { title: "Assessment · Protótipos" };
@@ -33,6 +34,7 @@ export default function Page() {
           para testar à vontade com os inspetores.
         </p>
       </div>
+      <InstallHint />
       <ul className="grid gap-3">
         {PATTERNS.map(({ href, icon: Icon, title, description }) => (
           <li key={href}>
